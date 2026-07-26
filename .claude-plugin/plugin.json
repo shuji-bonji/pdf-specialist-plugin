@@ -1,0 +1,46 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/.claude-plugin/plugin.schema.json",
+  "name": "pdf-specialist",
+  "version": "0.1.0",
+  "description": "PDF 専門家サブエージェント統合プラグイン。pdf-specialist エージェント（監査・検証・生成・仕様照会の専門家）に、PDF Family 4 MCP サーバ（pdf-reader / pdf-spec / pdf-verify / pdf-writer）と pdf-trust / pdf-publish Skill を同梱する。判定は evaluate_policy（決定論的ルールエンジン）と veraPDF が下し、エージェントは編成とナラティブのみを担う。",
+  "author": {
+    "name": "shuji-bonji",
+    "email": "bonji@mikuro.jp",
+    "url": "https://github.com/shuji-bonji"
+  },
+  "homepage": "https://github.com/shuji-bonji/pdf-specialist-plugin",
+  "repository": "https://github.com/shuji-bonji/pdf-specialist-plugin",
+  "license": "MIT",
+  "keywords": [
+    "pdf",
+    "agent",
+    "subagent",
+    "specialist",
+    "audit",
+    "digital-signature",
+    "pdf-a",
+    "pdf-ua",
+    "pades",
+    "verapdf",
+    "mcp",
+    "skill"
+  ],
+  "mcpServers": {
+    "pdf-reader": {
+      "command": "npx",
+      "args": ["-y", "@shuji-bonji/pdf-reader-mcp@latest"]
+    },
+    "pdf-spec": {
+      "command": "npx",
+      "args": ["-y", "@shuji-bonji/pdf-spec-mcp@latest"]
+    },
+    "pdf-verify": {
+      "command": "npx",
+      "args": ["-y", "@shuji-bonji/pdf-verify-mcp@latest"]
+    },
+    "pdf-writer": {
+      "command": "npx",
+      "args": ["-y", "@shuji-bonji/pdf-writer-mcp@latest"]
+    }
+  }
+}
