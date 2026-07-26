@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/.claude-plugin/plugin.schema.json",
   "name": "pdf-specialist",
   "version": "0.1.0",
-  "description": "PDF 専門家サブエージェント統合プラグイン。pdf-specialist エージェント（監査・検証・生成・仕様照会の専門家）に、PDF Family 4 MCP サーバ（pdf-reader / pdf-spec / pdf-verify / pdf-writer）と pdf-trust / pdf-publish Skill を同梱する。判定は evaluate_policy（決定論的ルールエンジン）と veraPDF が下し、エージェントは編成とナラティブのみを担う。",
+  "description": "An all-in-one plugin for the pdf-specialist subagent: auditing, verifying, producing and looking up the specification for PDFs. Bundles the four PDF Family MCP servers (pdf-reader / pdf-spec / pdf-verify / pdf-writer) with the pdf-trust and pdf-publish Skills. Verdicts come from evaluate_policy (a deterministic rule engine) and veraPDF; the agent orchestrates and explains, and never overrides them.",
   "author": {
     "name": "shuji-bonji",
     "email": "bonji@mikuro.jp",
