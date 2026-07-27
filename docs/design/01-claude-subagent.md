@@ -111,21 +111,29 @@ sequenceDiagram
 ## 4. 配布形態 — プラグイン化
 
 個人利用なら `.claude/agents/` 直置きで足りるが、配布するなら
-**プラグイン（MCP + Skill + Agent の同梱）** が完成形:
+**プラグイン（Agent + MCP、Skill は依存宣言）** が完成形:
 
 ```
 pdf-specialist-plugin/
-├── .claude-plugin/plugin.json   # マニフェスト
-├── agents/pdf-specialist.md     # 本パターンのエージェント定義
-├── skills/
-│   ├── pdf-trust/               # 既存 Skill をそのまま同梱
-│   └── pdf-publish/
-└── .mcp.json                    # pdf-reader/spec/verify/writer を npx で接続
+├── .claude-plugin/plugin.json   # マニフェスト + mcpServers + dependencies
+└── agents/pdf-specialist.md     # 本パターンのエージェント定義
+```
+
+```json
+"dependencies": ["pdf-trust", "pdf-publish"]
 ```
 
 既に pdf-trust / pdf-publish / 各 MCP プラグインが個別に存在するので、
 実作業は「agents/ を足した統合プラグイン」を 1 つ切るだけ。
 Cowork / Claude Code の両方で同じ定義が動く。
+
+> **【2026-07-27 改訂】v0.2.0 までは Skill を `skills/` に**コピー同梱**していたが、
+> コピーが古いまま気づかない事故が起きたため v0.3.0 で `dependencies` に切り替えた。
+> install 済みプラグインは自分のディレクトリ外を参照できない（symlink / submodule は
+> キャッシュに乗らない）ので、選択肢は「同梱」か「依存」の二択であり、ズレようがないのは後者。
+> **このプラグインの価値は Skill の入れ物であることではなく、`tools` から Write / Bash を外して
+> 「監査エージェントは書き換えられない」を構造的に保証する隔離と権限の器**である点。
+> 同梱を外したことで、その役割がマニフェスト上でも澄んだ。
 
 ## 5. Agent SDK からのプログラム利用
 

@@ -3,22 +3,21 @@
 [English](./README.md)
 
 PDF 専門家サブエージェント **pdf-specialist** の統合プラグイン。
-1 プラグインで「エージェント定義 + PDF Family 4 MCP サーバ + pdf-trust / pdf-publish Skill」が揃う。
+1 プラグインで「エージェント定義 + PDF Family 4 MCP サーバ + pdf-trust / pdf-publish Skill（依存で自動導入）」が揃う。
 
 > 設計書: PDF 専門家エージェント設計書 パターン1（Claude サブエージェント構成）の実装。
-> **現状 v0.2.0 も未実運用**（v0.1.0 が初版、v0.2.0 で pdf-trust 0.3.0 を再同期し版数要件を追記）。
-> 実行利用の結果で詳細（tools パターン・model・発火条件）を補正する。
+> **現状 v0.3.0 も未実運用**。実行利用の結果で詳細（tools パターン・model・発火条件）を補正する。
 
 ## 構成
 
 ```
 pdf-specialist-plugin/
 ├── .claude-plugin/plugin.json   # マニフェスト + mcpServers（PDF Family 4 サーバを npx 接続）
-├── agents/pdf-specialist.md     # サブエージェント定義（委譲トリガー + 絶対規則）
-└── skills/
-    ├── pdf-trust/               # 受入監査 Skill（同梱コピー）
-    └── pdf-publish/             # 納品パイプライン Skill（同梱コピー）
+└── agents/pdf-specialist.md     # サブエージェント定義（委譲トリガー + 絶対規則）
 ```
+
+pdf-trust / pdf-publish Skill は**同梱していない**。`dependencies` で宣言し、同じ marketplace
+から自動で入る（下記「Skill は依存で入る」）。
 
 ## インストール
 
@@ -26,6 +25,9 @@ pdf-specialist-plugin/
 /plugin marketplace add shuji-bonji/claude-plugins
 /plugin install pdf-specialist
 ```
+
+`pdf-trust` / `pdf-publish` は依存として自動で入り、install 出力の末尾に列挙される。
+**Claude Code v2.1.110 以上**が必要（enable / disable が依存へ伝播するのは v2.1.143 以上）。
 
 ### 必要な環境設定
 
@@ -65,16 +67,24 @@ pdf-specialist-plugin/
 4. **縮退の明示** — 未接続 MCP の項目は「未実施」と明記
 5. **二層応答** — 機械可読サマリ + 人間向けレポート
 
-## 同梱 Skill の同期について
+## Skill は依存で入る
 
-`skills/` 配下は [pdf-trust-skill](https://github.com/shuji-bonji/pdf-trust-skill) /
-[pdf-publish-skill](https://github.com/shuji-bonji/pdf-publish-skill) からの**コピー同梱**。
-原本は各リポジトリであり、更新時は以下で再同期する:
-
-```bash
-cp -R ../pdf-trust-skill/skills/pdf-trust skills/
-cp -R ../pdf-publish-skill/skills/pdf-publish skills/
+```json
+"dependencies": ["pdf-trust", "pdf-publish"]
 ```
+
+v0.2.0 までは 2 つの Skill を `skills/` に**コピー同梱**し、[pdf-trust-skill](https://github.com/shuji-bonji/pdf-trust-skill) /
+[pdf-publish-skill](https://github.com/shuji-bonji/pdf-publish-skill) から手で `cp -R` していた。
+**コピーが古いまま気づかない事故が実際に起きた**ので、v0.3.0 で `skills/` を廃止し依存宣言に変えた。
+Skill ごとに原本が 1 つになり、忘れうる同期作業が構造的に消える。
+
+install 済みプラグインは**自分のディレクトリの外を参照できない** — symlink も submodule も
+install 後のキャッシュには乗らない。つまり選択肢は「同梱」か「依存」の二択で、ズレようがないのは後者。
+
+どちらの名前も**このプラグインと同じ marketplace 内**で解決されるため、
+`allowCrossMarketplaceDependenciesOn` の登録は不要。バージョン範囲は固定していない
+（各 Skill は marketplace エントリが提供する版に追随する）。固定するには marketplace 側に
+`pdf-trust--v{version}` 形式の git タグが要り、これは現行のリポジトリ単位のリリースタグとは別の規約になる。
 
 ## 既知の未検証事項（実運用後に補正）
 

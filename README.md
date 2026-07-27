@@ -2,11 +2,10 @@
 
 [日本語](./README.ja.md)
 
-An all-in-one plugin for **pdf-specialist**, a subagent for working with PDFs. Installing it gives you the agent definition, the four PDF Family MCP servers, and the pdf-trust / pdf-publish Skills in one step.
+An all-in-one plugin for **pdf-specialist**, a subagent for working with PDFs. Installing it gives you the agent definition, the four PDF Family MCP servers, and — through plugin dependencies — the pdf-trust / pdf-publish Skills, in one step.
 
 > Implements pattern 1 (Claude subagent) of the PDF specialist agent design.
-> **v0.2.0 has not been through real use yet either** (v0.1.0 was the first cut; v0.2.0 re-syncs
-> pdf-trust 0.3.0 and adds the version requirements below) — the details (tool patterns, model,
+> **v0.3.0 has not been through real use yet either** — the details (tool patterns, model,
 > delegation triggers) will be corrected against what actually happens in practice.
 
 ## Layout
@@ -14,11 +13,12 @@ An all-in-one plugin for **pdf-specialist**, a subagent for working with PDFs. I
 ```
 pdf-specialist-plugin/
 ├── .claude-plugin/plugin.json   # Manifest + mcpServers (the four PDF Family servers over npx)
-├── agents/pdf-specialist.md     # Subagent definition (delegation triggers + hard rules)
-└── skills/
-    ├── pdf-trust/               # Acceptance audit Skill (bundled copy)
-    └── pdf-publish/             # Delivery pipeline Skill (bundled copy)
+└── agents/pdf-specialist.md     # Subagent definition (delegation triggers + hard rules)
 ```
+
+The pdf-trust and pdf-publish Skills are **not bundled**. They are declared in
+`dependencies` and installed from the same marketplace, so they stay at whatever version their
+own repositories publish — see [Skills come from dependencies](#skills-come-from-dependencies).
 
 ## Install
 
@@ -26,6 +26,10 @@ pdf-specialist-plugin/
 /plugin marketplace add shuji-bonji/claude-plugins
 /plugin install pdf-specialist
 ```
+
+`pdf-trust` and `pdf-publish` are installed automatically as dependencies and listed at the end of
+the install output. Requires **Claude Code v2.1.110 or later** (v2.1.143+ for enable/disable to
+propagate to dependencies).
 
 ### Environment
 
@@ -68,16 +72,27 @@ Ask the main agent as you normally would; the description's triggers route the w
 4. **Say what was skipped** — anything an unconnected MCP would have covered is reported as not checked, not as fine
 5. **Answer in two layers** — a machine-readable summary, then a report for a human
 
-## Keeping the bundled Skills in sync
+## Skills come from dependencies
 
-`skills/` holds **copies** from [pdf-trust-skill](https://github.com/shuji-bonji/pdf-trust-skill) and
-[pdf-publish-skill](https://github.com/shuji-bonji/pdf-publish-skill). Those repositories are the
-originals; re-sync with:
-
-```bash
-cp -R ../pdf-trust-skill/skills/pdf-trust skills/
-cp -R ../pdf-publish-skill/skills/pdf-publish skills/
+```json
+"dependencies": ["pdf-trust", "pdf-publish"]
 ```
+
+Up to v0.2.0 the two Skills were **copies** kept in `skills/`, re-synced by hand from
+[pdf-trust-skill](https://github.com/shuji-bonji/pdf-trust-skill) and
+[pdf-publish-skill](https://github.com/shuji-bonji/pdf-publish-skill). A copy that silently went
+stale is exactly what happened, so v0.3.0 removed `skills/` and declared the two as dependencies
+instead. There is now one source of truth per Skill, and no sync step to forget.
+
+An installed plugin cannot reference files outside its own directory — symlinks and submodules do
+not survive installation, because the external files are never copied into the cache. So bundling
+and depending were the only two options, and depending is the one that cannot drift.
+
+Both names resolve **within the same marketplace** as this plugin, so no
+`allowCrossMarketplaceDependenciesOn` entry is needed. No version range is pinned: each Skill
+tracks whatever version its marketplace entry provides. Pinning one would require the marketplace
+to carry `pdf-trust--v{version}` git tags, which is a separate convention from the per-repository
+release tags in use today.
 
 ## Open questions (to be settled by real use)
 
