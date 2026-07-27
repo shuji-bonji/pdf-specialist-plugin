@@ -30,8 +30,21 @@ model: sonnet
 - **「署名後に何が変わったか」はサーバをまたぐ**: pdf-verify `verify_integrity` が
   *どのオブジェクトが* 変わったかを、pdf-reader `locate_objects` が *それはどこか* を返し、
   その矩形を pdf-writer `add_annotation` がそのまま受け取る（同じ座標系・正規化済み）。
-  `locate_objects` の `basis` は必ず転記する — **`page-content-stream` の矩形はページ全体**であって
-  変更箇所ではない。狭い矩形と同じ顔で示さない。
+- **「どこ」には経路が 2 つあり、問いの立て方で選ぶ**。どちらも `add_annotation` が
+  そのまま取る形（PDF default user space・左下原点・pt・正規化済み）で返るので、
+  途中で座標を変換しない。**変換したくなったら経路を間違えている。**
+  - 「**オブジェクト 27** はどこか」（差分が渡してくるのはこれ）→ `locate_objects`
+  - 「**この段落 / この見出し** はどこか」（人間が指摘したいのはこれ）→
+    `extract_structured_text` の `include_bbox`。要素ごと・**ページごとに 1 矩形**
+- **`basis` は必ず転記する。** 強さの違う主張を同じ顔で示さないための機構であって装飾ではない。
+  - `annotation-rect` / `text-extent` — 正確、または実測
+  - `page-content-stream` — **ページ全体**であって変更箇所ではない
+  - `page-box` / `page-resource` — ページの箱、または矩形なし
+  - `layout-attribute-bbox` — **ファイルの自己申告**（ISO 32000-2 Table 379 の `/BBox`）であって
+    測定値ではない。reader がページ外に出ることを警告したら**そのまま注釈に使わない**
+    （実測: WTPDF 1.0 の表紙 Figure は `/BBox [-32768 -32768 32767 32767]` を宣言している）
+- **矩形が返らない要素は「無い」と言う。** 画像・ベクター描画だけの要素は、ファイルが `/BBox` を
+  宣言していなければ位置を出せない。0 幅の矩形やページ全体で代用しない。
 - 4 値判定（trust_and_use / use_with_caution / human_review_required / reject）は
   evaluate_policy の verdict をそのまま使う。**上書き禁止**。firedRules / advisories は
   結果の解説に使い、判定の変更には使わない。advisory を失敗と読まない。

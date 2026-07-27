@@ -46,7 +46,9 @@ pdf-specialist-plugin/
   **v0.10.0+ 推奨**（`verify_integrity` のリビジョン間オブジェクト単位差分。
   「署名後に何が変わったか」をオブジェクト単位で言えるようになる。4 値判定自体は不変）
 - pdf-reader-mcp **v0.10.0+** 推奨（`locate_objects` = オブジェクト番号 → ページ + 矩形。
-  上の差分を位置に落とすのに要る）
+  上の差分を位置に落とすのに要る）／**v0.11.0+** で逆方向も揃う
+  （`extract_structured_text` の `include_bbox` = **構造要素** → 矩形。
+  「この段落に注釈」も人間が座標を指定せずに済む）
 - pdf-writer-mcp **v0.15.0+** 推奨（preserveSignatures / tag_form_fields）
 
 各 MCP プラグインが `@latest` で接続するため通常は満たされる。`dependencies` にバージョン範囲は固定していない（下記）。

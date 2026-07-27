@@ -52,7 +52,9 @@ MCP plugins and inherit that environment at start-up.
   **v0.10.0+ recommended** — `verify_integrity` then reports an object-level diff of the revision
   chain, so "what changed after signing" can be answered per object. The verdict itself is unchanged
 - pdf-reader-mcp **v0.10.0+** recommended — `locate_objects` (object number → page and rectangle),
-  which is what turns that diff into a location
+  which is what turns that diff into a location. **v0.11.0+** adds the other direction:
+  `extract_structured_text` with `include_bbox` locates a *structure element*, so "annotate this
+  paragraph" needs no coordinate from the user either
 - pdf-writer-mcp **v0.15.0+** recommended — `preserveSignatures`, `tag_form_fields`
 
 Each MCP plugin connects with `@latest`, so these are normally satisfied. No version range is
