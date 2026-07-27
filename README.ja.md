@@ -6,7 +6,8 @@ PDF 専門家サブエージェント **pdf-specialist** の統合プラグイ�
 1 プラグインで「エージェント定義 + PDF Family 4 MCP サーバ + pdf-trust / pdf-publish Skill」が揃う。
 
 > 設計書: PDF 専門家エージェント設計書 パターン1（Claude サブエージェント構成）の実装。
-> **現状 v0.1.0 は未実運用の初版**。実行利用の結果で詳細（tools パターン・model・発火条件）を補正する。
+> **現状 v0.2.0 も未実運用**（v0.1.0 が初版、v0.2.0 で pdf-trust 0.3.0 を再同期し版数要件を追記）。
+> 実行利用の結果で詳細（tools パターン・model・発火条件）を補正する。
 
 ## 構成
 
@@ -39,7 +40,11 @@ pdf-specialist-plugin/
 
 ### バージョン要件
 
-- pdf-verify-mcp **v0.7.0+**（evaluate_policy。pdf-trust の 4 値判定に必須）
+- pdf-verify-mcp **v0.7.0+**（evaluate_policy。pdf-trust の 4 値判定に必須）／
+  **v0.10.0+ 推奨**（`verify_integrity` のリビジョン間オブジェクト単位差分。
+  「署名後に何が変わったか」をオブジェクト単位で言えるようになる。4 値判定自体は不変）
+- pdf-reader-mcp **v0.10.0+** 推奨（`locate_objects` = オブジェクト番号 → ページ + 矩形。
+  上の差分を位置に落とすのに要る）
 - pdf-writer-mcp **v0.15.0+** 推奨（preserveSignatures / tag_form_fields）
 
 `.claude-plugin/plugin.json` は `@latest` で接続するため通常は満たされる。

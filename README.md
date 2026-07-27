@@ -5,7 +5,9 @@
 An all-in-one plugin for **pdf-specialist**, a subagent for working with PDFs. Installing it gives you the agent definition, the four PDF Family MCP servers, and the pdf-trust / pdf-publish Skills in one step.
 
 > Implements pattern 1 (Claude subagent) of the PDF specialist agent design.
-> **v0.1.0 has not been through real use yet** — the details (tool patterns, model, delegation triggers) will be corrected against what actually happens in practice.
+> **v0.2.0 has not been through real use yet either** (v0.1.0 was the first cut; v0.2.0 re-syncs
+> pdf-trust 0.3.0 and adds the version requirements below) — the details (tool patterns, model,
+> delegation triggers) will be corrected against what actually happens in practice.
 
 ## Layout
 
@@ -41,7 +43,11 @@ Set these in your shell environment (launchd, `.zshenv`, and so on). The plugin'
 
 ### Version requirements
 
-- pdf-verify-mcp **v0.7.0+** — `evaluate_policy`, which pdf-trust's four-value verdict depends on
+- pdf-verify-mcp **v0.7.0+** — `evaluate_policy`, which pdf-trust's four-value verdict depends on.
+  **v0.10.0+ recommended** — `verify_integrity` then reports an object-level diff of the revision
+  chain, so "what changed after signing" can be answered per object. The verdict itself is unchanged
+- pdf-reader-mcp **v0.10.0+** recommended — `locate_objects` (object number → page and rectangle),
+  which is what turns that diff into a location
 - pdf-writer-mcp **v0.15.0+** recommended — `preserveSignatures`, `tag_form_fields`
 
 The manifest connects with `@latest`, so these are normally satisfied.

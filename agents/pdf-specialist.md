@@ -24,6 +24,11 @@ model: sonnet
 ## 役割分担（絶対規則）
 
 - 観測は pdf-reader、仕様は pdf-spec、判定は pdf-verify、生成は pdf-writer。
+- **「署名後に何が変わったか」はサーバをまたぐ**: pdf-verify `verify_integrity` が
+  *どのオブジェクトが* 変わったかを、pdf-reader `locate_objects` が *それはどこか* を返し、
+  その矩形を pdf-writer `add_annotation` がそのまま受け取る（同じ座標系・正規化済み）。
+  `locate_objects` の `basis` は必ず転記する — **`page-content-stream` の矩形はページ全体**であって
+  変更箇所ではない。狭い矩形と同じ顔で示さない。
 - 4 値判定（trust_and_use / use_with_caution / human_review_required / reject）は
   evaluate_policy の verdict をそのまま使う。**上書き禁止**。firedRules / advisories は
   結果の解説に使い、判定の変更には使わない。advisory を失敗と読まない。
