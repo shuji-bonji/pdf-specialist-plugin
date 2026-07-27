@@ -49,7 +49,8 @@ pdf-specialist-plugin/
   上の差分を位置に落とすのに要る）／**v0.11.0+** で逆方向も揃う
   （`extract_structured_text` の `include_bbox` = **構造要素** → 矩形。
   「この段落に注釈」も人間が座標を指定せずに済む）
-- pdf-writer-mcp **v0.15.0+** 推奨（preserveSignatures / tag_form_fields）
+- pdf-writer-mcp **v0.15.0+** 推奨（preserveSignatures / tag_form_fields）。
+  **v0.16.0+** で PDF 2.0 出力と PDF/A-4 / PDF/A-4f の器付け（`ensure_pdfa` の `flavour`）が入った
 
 各 MCP プラグインが `@latest` で接続するため通常は満たされる。`dependencies` にバージョン範囲は固定していない（下記）。
 

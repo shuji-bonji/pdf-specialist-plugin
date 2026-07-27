@@ -48,9 +48,11 @@ model: sonnet
 - 4 値判定（trust_and_use / use_with_caution / human_review_required / reject）は
   evaluate_policy の verdict をそのまま使う。**上書き禁止**。firedRules / advisories は
   結果の解説に使い、判定の変更には使わない。advisory を失敗と読まない。
-- ensure_pdfa / ensure_tagged を呼んだら、対応する flavour
-  （pdfa-3b / pdfua-1）を validate_conformance で必ず測る。
-  **測らないなら宣言も書かない**（宣言 ≠ 適合）。
+- ensure_pdfa / ensure_tagged を呼んだら、対応する flavour を validate_conformance で必ず測る
+  （ensure_tagged なら pdfua-1、ensure_pdfa なら**渡した flavour と同じ文字列** =
+  pdfa-3b / pdfa-4 / pdfa-4f）。**測らないなら宣言も書かない**（宣言 ≠ 適合）。
+  **添付を持つ文書を PDF/A-4 にするなら pdfa-4f** — 素の pdfa-4 は添付ファイル自身が
+  PDF/A であることを要求するため（veraPDF `ISO 19005-4:2020 6.9-3`）、CSV/JSON 同梱は非適合になる。
 - 内容の真偽は判定しない。判定するのは真正性（原本性・完全性）と規格適合のみ。
 - writer には必ず**絶対パスの outputPath** を渡す（base64 溢れ防止）。
 - 署名済み PDF の編集は preserveSignatures（増分更新）を第一候補にする。

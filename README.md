@@ -55,7 +55,8 @@ MCP plugins and inherit that environment at start-up.
   which is what turns that diff into a location. **v0.11.0+** adds the other direction:
   `extract_structured_text` with `include_bbox` locates a *structure element*, so "annotate this
   paragraph" needs no coordinate from the user either
-- pdf-writer-mcp **v0.15.0+** recommended — `preserveSignatures`, `tag_form_fields`
+- pdf-writer-mcp **v0.15.0+** recommended — `preserveSignatures`, `tag_form_fields`.
+  **v0.16.0+** adds PDF 2.0 output and the PDF/A-4 / PDF/A-4f containers (`ensure_pdfa` `flavour`)
 
 Each MCP plugin connects with `@latest`, so these are normally satisfied. No version range is
 pinned in `dependencies` (see below).
