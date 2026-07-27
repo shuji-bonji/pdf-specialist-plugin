@@ -1,12 +1,16 @@
 {
   "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/.claude-plugin/plugin.schema.json",
   "name": "pdf-specialist",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "dependencies": [
     "pdf-trust",
-    "pdf-publish"
+    "pdf-publish",
+    "pdf-reader-mcp",
+    "pdf-spec-mcp",
+    "pdf-verify-mcp",
+    "pdf-writer-mcp"
   ],
-  "description": "An all-in-one plugin for the pdf-specialist subagent: auditing, verifying, producing and looking up the specification for PDFs. Bundles the four PDF Family MCP servers (pdf-reader / pdf-spec / pdf-verify / pdf-writer) and pulls in the pdf-trust and pdf-publish Skills as dependencies. Verdicts come from evaluate_policy (a deterministic rule engine) and veraPDF; the agent orchestrates and explains, and never overrides them.",
+  "description": "An all-in-one plugin for the pdf-specialist subagent: auditing, verifying, producing and looking up the specification for PDFs. Declares the four PDF Family MCP servers and the pdf-trust / pdf-publish Skills as dependencies, so one install brings the whole set. Verdicts come from evaluate_policy (a deterministic rule engine) and veraPDF; the agent orchestrates and explains, and never overrides them.",
   "author": {
     "name": "shuji-bonji",
     "email": "bonji@mikuro.jp",
@@ -28,35 +32,5 @@
     "verapdf",
     "mcp",
     "skill"
-  ],
-  "mcpServers": {
-    "pdf-reader": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@shuji-bonji/pdf-reader-mcp@latest"
-      ]
-    },
-    "pdf-spec": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@shuji-bonji/pdf-spec-mcp@latest"
-      ]
-    },
-    "pdf-verify": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@shuji-bonji/pdf-verify-mcp@latest"
-      ]
-    },
-    "pdf-writer": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@shuji-bonji/pdf-writer-mcp@latest"
-      ]
-    }
-  }
+  ]
 }

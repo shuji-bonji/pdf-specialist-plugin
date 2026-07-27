@@ -2,23 +2,23 @@
 
 [日本語](./README.ja.md)
 
-An all-in-one plugin for **pdf-specialist**, a subagent for working with PDFs. Installing it gives you the agent definition, the four PDF Family MCP servers, and — through plugin dependencies — the pdf-trust / pdf-publish Skills, in one step.
+An all-in-one plugin for **pdf-specialist**, a subagent for working with PDFs. Installing it gives you the agent definition and — through plugin dependencies — the four PDF Family MCP servers and the pdf-trust / pdf-publish Skills, in one step.
 
 > Implements pattern 1 (Claude subagent) of the PDF specialist agent design.
-> **v0.3.0 has not been through real use yet either** — the details (tool patterns, model,
-> delegation triggers) will be corrected against what actually happens in practice.
+> **v0.4.0 has not been through real use yet either** — the remaining details (model, delegation
+> triggers) will be corrected against what actually happens in practice.
 
 ## Layout
 
 ```
 pdf-specialist-plugin/
-├── .claude-plugin/plugin.json   # Manifest + mcpServers (the four PDF Family servers over npx)
+├── .claude-plugin/plugin.json   # Manifest + dependencies
 └── agents/pdf-specialist.md     # Subagent definition (delegation triggers + hard rules)
 ```
 
-The pdf-trust and pdf-publish Skills are **not bundled**. They are declared in
-`dependencies` and installed from the same marketplace, so they stay at whatever version their
-own repositories publish — see [Skills come from dependencies](#skills-come-from-dependencies).
+Nothing else is bundled. The four MCP servers and the two Skills are all
+[declared as dependencies](#everything-comes-from-dependencies) and installed from the same
+marketplace.
 
 ## Install
 
@@ -27,9 +27,9 @@ own repositories publish — see [Skills come from dependencies](#skills-come-fr
 /plugin install pdf-specialist
 ```
 
-`pdf-trust` and `pdf-publish` are installed automatically as dependencies and listed at the end of
-the install output. Requires **Claude Code v2.1.110 or later** (v2.1.143+ for enable/disable to
-propagate to dependencies).
+The six dependencies — `pdf-trust`, `pdf-publish` and the four MCP plugins — are installed
+automatically and listed at the end of the install output. Requires **Claude Code v2.1.110 or
+later** (v2.1.143+ for enable/disable to propagate to dependencies).
 
 ### Environment
 
@@ -40,10 +40,11 @@ propagate to dependencies).
 | `PDF_VERIFY_TRUST_ANCHORS` | pdf-verify | Optional | Directory of trust anchor certificates. Without it a verdict cannot go beyond `use_with_caution` |
 | `PDF_WRITER_FONT` | pdf-writer | In practice, for Japanese output | A single-face `.ttf` / `.otf` (the static Noto Sans JP build is a good choice) |
 
-Set these in your shell environment (launchd, `.zshenv`, and so on). The plugin's `mcpServers` inherit the environment at start-up.
+Set these in your shell environment (launchd, `.zshenv`, and so on). The servers come from the four
+MCP plugins and inherit that environment at start-up.
 
 > [!NOTE]
-> `${VAR}` expansion inside plugin.json's `env` block **does not work** — the literal string is passed through. This is why the manifest carries no `env` block and relies on inheritance instead.
+> `${VAR}` expansion inside a plugin.json `env` block **does not work** — the literal string is passed through. Every manifest in this family relies on shell-environment inheritance instead.
 
 ### Version requirements
 
@@ -54,7 +55,8 @@ Set these in your shell environment (launchd, `.zshenv`, and so on). The plugin'
   which is what turns that diff into a location
 - pdf-writer-mcp **v0.15.0+** recommended — `preserveSignatures`, `tag_form_fields`
 
-The manifest connects with `@latest`, so these are normally satisfied.
+Each MCP plugin connects with `@latest`, so these are normally satisfied. No version range is
+pinned in `dependencies` (see below).
 
 ## Usage
 
@@ -72,31 +74,51 @@ Ask the main agent as you normally would; the description's triggers route the w
 4. **Say what was skipped** — anything an unconnected MCP would have covered is reported as not checked, not as fine
 5. **Answer in two layers** — a machine-readable summary, then a report for a human
 
-## Skills come from dependencies
+## Everything comes from dependencies
 
 ```json
-"dependencies": ["pdf-trust", "pdf-publish"]
+"dependencies": [
+  "pdf-trust", "pdf-publish",
+  "pdf-reader-mcp", "pdf-spec-mcp", "pdf-verify-mcp", "pdf-writer-mcp"
+]
 ```
 
-Up to v0.2.0 the two Skills were **copies** kept in `skills/`, re-synced by hand from
+This plugin ships an agent definition and nothing else. It got there in two steps, both driven by
+the same failure mode.
+
+**v0.3.0 — the Skills.** Up to v0.2.0 they were **copies** in `skills/`, re-synced by hand from
 [pdf-trust-skill](https://github.com/shuji-bonji/pdf-trust-skill) and
-[pdf-publish-skill](https://github.com/shuji-bonji/pdf-publish-skill). A copy that silently went
-stale is exactly what happened, so v0.3.0 removed `skills/` and declared the two as dependencies
-instead. There is now one source of truth per Skill, and no sync step to forget.
+[pdf-publish-skill](https://github.com/shuji-bonji/pdf-publish-skill). A copy silently went stale,
+which is what copies do. An installed plugin cannot reference files outside its own directory —
+symlinks and submodules do not survive installation, because the external files are never copied
+into the cache. So bundling and depending were the only two options, and depending is the one that
+cannot drift.
 
-An installed plugin cannot reference files outside its own directory — symlinks and submodules do
-not survive installation, because the external files are never copied into the cache. So bundling
-and depending were the only two options, and depending is the one that cannot drift.
+**v0.4.0 — the MCP servers.** The manifest used to define all four inline, which collided with the
+standalone MCP plugins: Claude Code skipped this plugin's copies as duplicates of the same command.
+Worse, an MCP server's tools are named `mcp__plugin_<plugin-name>_<server-name>__<tool-name>`, so
+the prefix depended on **which plugin won the duplicate check** — that is, on what else the user
+had installed. A static `tools` allowlist in the agent cannot be correct for both cases. Declaring
+the MCP plugins as dependencies makes the names deterministic.
 
-Both names resolve **within the same marketplace** as this plugin, so no
-`allowCrossMarketplaceDependenciesOn` entry is needed. No version range is pinned: each Skill
+That mattered more than it sounds: through v0.3.0 the agent's allowlist read `mcp__pdf-reader__*`,
+which matches nothing under the documented naming, so **the agent had no PDF tools at all**. The
+patterns are now spelled out in full in `agents/pdf-specialist.md`.
+
+All six names resolve **within the same marketplace** as this plugin, so no
+`allowCrossMarketplaceDependenciesOn` entry is needed. No version range is pinned: each dependency
 tracks whatever version its marketplace entry provides. Pinning one would require the marketplace
 to carry `pdf-trust--v{version}` git tags, which is a separate convention from the per-repository
 release tags in use today.
 
 ## Open questions (to be settled by real use)
 
-- [ ] Whether the wildcards in `tools` (`mcp__pdf-reader__*` and friends) match the tool-name prefixes the bundled mcpServers actually produce — some environments use the `mcp__plugin_..._pdf-reader__*` form
+- [x] **Dependency resolution works** (verified 2026-07-27 on Claude Code v2.1.212): a clean
+      `claude plugin install pdf-specialist@shuji-bonji` reported `(+ 2 dependencies: pdf-publish,
+      pdf-trust)`; uninstalling reported pdf-trust as an auto-installed dependency eligible for
+      `claude plugin prune`; and disabling pdf-trust while pdf-specialist is enabled is refused
+      with a chained command. What is *not* yet verified is delegation and day-to-day use
+- [x] **The `tools` wildcards did not match** (found 2026-07-27). The documented naming is `mcp__plugin_<plugin-name>_<server-name>__<tool-name>`, so `mcp__pdf-reader__*` matched nothing and the allowlist left the agent with only Read / Glob / Skill. Fixed in v0.4.0 by writing the full prefixes and moving the MCP servers to dependencies so the names stop depending on what else is installed
 - [x] `${VAR}` expansion in plugin.json's `env` **does not work** (confirmed 2026-07-26 against another plugin: `"${PDF_SPEC_DIR}"` arrived verbatim and produced a REGISTRY_ERROR). The `env` block was removed in favour of shell-environment inheritance
 - [ ] How reliably delegation fires (wording of the description)
 - [ ] Model choice — whether sonnet suffices, or specification-heavy work warrants a stronger model

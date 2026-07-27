@@ -9,10 +9,13 @@ description: >
   「電帳法対応の PDF」「仕様の根拠条文は」等が発火の合図。
   単発のツール呼び出しで済ませてはならない。
 tools:
-  - mcp__pdf-reader__*
-  - mcp__pdf-spec__*
-  - mcp__pdf-verify__*
-  - mcp__pdf-writer__*
+  # 命名規則は mcp__plugin_<プラグイン名>_<サーバ名>__<ツール名>（Plugins reference）。
+  # プラグイン名とサーバ名は別物で、pdf-reader-mcp だけ両者が同名なので重なって見える。
+  # tools は allowlist なので、綴りを 1 つ間違えるとそのサーバのツールが丸ごと消える。
+  - mcp__plugin_pdf-reader-mcp_pdf-reader-mcp__*
+  - mcp__plugin_pdf-spec-mcp_pdf-spec__*
+  - mcp__plugin_pdf-verify-mcp_pdf-verify__*
+  - mcp__plugin_pdf-writer-mcp_pdf-writer__*
   - Read
   - Glob
   - Skill
