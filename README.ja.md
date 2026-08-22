@@ -44,7 +44,11 @@ pdf-specialist-plugin/
 
 - pdf-verify-mcp **v0.7.0+**（evaluate_policy。pdf-trust の 4 値判定に必須）／
   **v0.10.0+ 推奨**（`verify_integrity` のリビジョン間オブジェクト単位差分。
-  「署名後に何が変わったか」をオブジェクト単位で言えるようになる。4 値判定自体は不変）
+  「署名後に何が変わったか」をオブジェクト単位で言えるようになる。4 値判定自体は不変）／
+  **監査レポートには v0.17.0+ 推奨**（リビジョン一覧が全履歴かの `revisionChain`（v0.16.0）と、
+  `startxref` の個数とリビジョン一覧の食い違いに説明が付いているかの
+  `revisionCountAgreement`（v0.17.0）がフィールドになった。pdf-trust v0.7.0 は
+  `notes` の散文照合ではなくこの 2 つを読む）
 - pdf-reader-mcp **v0.10.0+** 推奨（`locate_objects` = オブジェクト番号 → ページ + 矩形。
   上の差分を位置に落とすのに要る）／**v0.11.0+** で逆方向も揃う
   （`extract_structured_text` の `include_bbox` = **構造要素** → 矩形。

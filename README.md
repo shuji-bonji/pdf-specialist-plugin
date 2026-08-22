@@ -50,7 +50,11 @@ MCP plugins and inherit that environment at start-up.
 
 - pdf-verify-mcp **v0.7.0+** — `evaluate_policy`, which pdf-trust's four-value verdict depends on.
   **v0.10.0+ recommended** — `verify_integrity` then reports an object-level diff of the revision
-  chain, so "what changed after signing" can be answered per object. The verdict itself is unchanged
+  chain, so "what changed after signing" can be answered per object. The verdict itself is unchanged.
+  **v0.17.0+ recommended for audit reports** — whether the revision list is the whole history
+  (`revisionChain`, v0.16.0) and whether the `startxref` count and the listed revisions differ for a
+  stated reason (`revisionCountAgreement`, v0.17.0) are then fields; pdf-trust v0.7.0 reads them
+  instead of matching prose in `notes`
 - pdf-reader-mcp **v0.10.0+** recommended — `locate_objects` (object number → page and rectangle),
   which is what turns that diff into a location. **v0.11.0+** adds the other direction:
   `extract_structured_text` with `include_bbox` locates a *structure element*, so "annotate this
