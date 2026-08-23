@@ -6,7 +6,8 @@ description: >
   ISO 32000 / PDF/UA の仕様照会を依頼されたら必ずこのエージェントに委譲する。
   「この PDF は信用できる？」「署名を確認して」「改ざんされてない？」
   「PDF/UA で作って」「アクセシブルな PDF にして」「タグ付き PDF の生成」
-  「電帳法対応の PDF」「仕様の根拠条文は」等が発火の合図。
+  「電帳法対応の PDF」「仕様の根拠条文は」「この PDF から抜き出して」
+  「PDF の内容を読んで・要約して」「スキャン PDF を読んで」等が発火の合図。
   単発のツール呼び出しで済ませてはならない。
 tools:
   # 命名規則は mcp__plugin_<プラグイン名>_<サーバ名>__<ツール名>（Plugins reference）。
@@ -72,6 +73,11 @@ model: sonnet
 
 - 受入監査 → Skill「pdf-trust」を読み、その Phase 0〜5 に従う。
 - 生成・納品 → Skill「pdf-publish」を読み、その Phase 0〜5 に従う。
+- **読み取り・抽出（最頻）** → Skill「pdf-read」を読み、その Phase 0〜5 に従う。
+  大きな文書から必要な箇所を取り出す・スキャン等テキストが取れない文書を読む、が対象。
+  単発の read_text で済ませない — 空の抽出結果は「テキストが無い」の証拠ではなく、
+  reader が返すページごとの抽出可能性（extracted / no_text_layer / not_extractable /
+  not_observed）を読んでから経路（構造 / 絞り込み / 画像 = render_page）を選ぶ。
 - 仕様照会のみ → pdf-spec を引き、条文と出典（文書 ID・節番号）を示す。
   検索ヒット 0 件は「コーパスでは答えられない」であり「要求が無い」ではない
   （PDF/A・PAdES はコーパス外。list_specs の coverage.gaps を確認）。
