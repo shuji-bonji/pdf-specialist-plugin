@@ -2,7 +2,7 @@
 
 [日本語](./README.ja.md)
 
-An all-in-one plugin for **pdf-specialist**, a subagent for working with PDFs. Installing it gives you the agent definition and — through plugin dependencies — the four PDF Family MCP servers and the pdf-trust / pdf-publish Skills, in one step.
+An all-in-one plugin for **pdf-specialist**, a subagent for working with PDFs. Installing it gives you the agent definition and — through plugin dependencies — the four PDF Family MCP servers and the pdf-trust / pdf-publish / pdf-read Skills, in one step.
 
 > Implements pattern 1 (Claude subagent) of the PDF specialist agent design.
 > **v0.4.0 has not been through real use yet either** — the remaining details (model, delegation
@@ -27,7 +27,7 @@ marketplace.
 /plugin install pdf-specialist
 ```
 
-The six dependencies — `pdf-trust`, `pdf-publish` and the four MCP plugins — are installed
+The seven dependencies — `pdf-trust`, `pdf-publish`, `pdf-read` and the four MCP plugins — are installed
 automatically and listed at the end of the install output. Requires **Claude Code v2.1.110 or
 later** (v2.1.143+ for enable/disable to propagate to dependencies).
 
@@ -71,6 +71,7 @@ Ask the main agent as you normally would; the description's triggers route the w
 
 - "Can I trust this contract PDF?" → pdf-trust (`profile=contract`)
 - "Turn this Markdown into a tagged, PDF/UA-conformant PDF" → pdf-publish
+- "Pull the section about X out of this 500-page PDF" / "read this scanned PDF" → pdf-read
 - "Is a document title mandatory for tagged PDF? Which clause says so?" → pdf-spec lookup
 
 ## Design rules
@@ -85,7 +86,7 @@ Ask the main agent as you normally would; the description's triggers route the w
 
 ```json
 "dependencies": [
-  "pdf-trust", "pdf-publish",
+  "pdf-trust", "pdf-publish", "pdf-read",
   "pdf-reader-mcp", "pdf-spec-mcp", "pdf-verify-mcp", "pdf-writer-mcp"
 ]
 ```

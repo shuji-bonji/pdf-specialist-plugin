@@ -3,7 +3,7 @@
 [English](./README.md)
 
 PDF 専門家サブエージェント **pdf-specialist** の統合プラグイン。
-1 プラグインで「エージェント定義 + PDF Family 4 MCP サーバ + pdf-trust / pdf-publish Skill」が揃う（MCP・Skill とも依存宣言で自動導入）。
+1 プラグインで「エージェント定義 + PDF Family 4 MCP サーバ + pdf-trust / pdf-publish / pdf-read Skill」が揃う（MCP・Skill とも依存宣言で自動導入）。
 
 > 設計書: PDF 専門家エージェント設計書 パターン1（Claude サブエージェント構成）の実装。
 > **現状 v0.4.0 も未実運用**。実行利用の結果で残る詳細（model・発火条件）を補正する。
@@ -26,7 +26,7 @@ pdf-specialist-plugin/
 /plugin install pdf-specialist
 ```
 
-依存 6 件（`pdf-trust` / `pdf-publish` + MCP プラグイン 4 つ）は自動で入り、install 出力の末尾に
+依存 7 件（`pdf-trust` / `pdf-publish` / `pdf-read` + MCP プラグイン 4 つ）は自動で入り、install 出力の末尾に
 列挙される。**Claude Code v2.1.110 以上**が必要（enable / disable が依存へ伝播するのは v2.1.143 以上）。
 
 ### 必要な環境設定
@@ -78,7 +78,7 @@ pdf-specialist-plugin/
 
 ```json
 "dependencies": [
-  "pdf-trust", "pdf-publish",
+  "pdf-trust", "pdf-publish", "pdf-read",
   "pdf-reader-mcp", "pdf-spec-mcp", "pdf-verify-mcp", "pdf-writer-mcp"
 ]
 ```
