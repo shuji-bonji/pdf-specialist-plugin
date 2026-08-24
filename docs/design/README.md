@@ -28,8 +28,8 @@ flowchart TB
     subgraph family["PDF Family（MCP サーバ）"]
         READER["pdf-reader-mcp<br/>観測する<br/>（判定しない）"]
         SPEC["pdf-spec-mcp<br/>仕様を引く<br/>（適合判定しない）"]
-        VERIFY["pdf-verify-mcp<br/>反証する<br/>（evaluate_policy = 決定論的判定）"]
-        WRITER["pdf-writer-mcp<br/>書く<br/>（宣言 ≠ 適合）"]
+        VERIFY["pdf-verify-mcp<br/>規格破りを見つける<br/>（evaluate_policy = 決定論的判定）"]
+        WRITER["pdf-writer-mcp<br/>書く<br/>（ラベル ≠ 規格どおり）"]
     end
     LLM --> TRUST & PUBLISH
     TRUST --> VERIFY
