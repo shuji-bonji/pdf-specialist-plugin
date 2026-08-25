@@ -34,6 +34,7 @@ pdf-specialist-plugin/
 | 変数 | 対象 | 必須 | 内容 |
 |---|---|---|---|
 | `PDF_SPEC_DIR` | pdf-spec | pdf-spec を使うなら必須 | 仕様 PDF コーパスのディレクトリ。未設定だと pdf-spec は起動失敗するが、他 3 サーバと Skill は動作する |
+| `PDF_SPEC_CACHE_DIR` | pdf-spec | 任意 | pdf-spec v0.5.0+ が索引のディスクキャッシュを置く場所（既定 `${XDG_CACHE_HOME:-~/.cache}/pdf-spec-mcp`）。仕様ごとの初回の `search_spec` / 全走査の `get_requirements` は索引を構築し（6〜14 秒）、以後のサーバプロセスは 1 秒未満で読み戻す。`PDF_SPEC_CACHE=off` で無効 |
 | `PDF_VERIFY_VERAPDF` | pdf-verify | 任意 | veraPDF 実行パス。無ければ PATH 探索 → 内蔵ルールに縮退 |
 | `PDF_VERIFY_TRUST_ANCHORS` | pdf-verify | 任意 | 信頼アンカー証明書ディレクトリ。無いと verdict は use_with_caution 止まり |
 | `PDF_WRITER_FONT` | pdf-writer | 日本語出力に実質必須 | 単一フェイス .ttf/.otf（Noto Sans JP static 版推奨） |

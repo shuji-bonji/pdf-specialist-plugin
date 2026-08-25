@@ -36,6 +36,7 @@ later** (v2.1.143+ for enable/disable to propagate to dependencies).
 | Variable | Server | Required | Purpose |
 |---|---|---|---|
 | `PDF_SPEC_DIR` | pdf-spec | Yes, to use pdf-spec | Directory holding the specification PDF corpus. Without it pdf-spec fails to start; the other three servers and both Skills still work |
+| `PDF_SPEC_CACHE_DIR` | pdf-spec | Optional | Where pdf-spec v0.5.0+ keeps its on-disk index cache (default `${XDG_CACHE_HOME:-~/.cache}/pdf-spec-mcp`). The first `search_spec` / full `get_requirements` on a spec builds an index (6–14 s); every later server process reads it back in under a second. `PDF_SPEC_CACHE=off` disables it |
 | `PDF_VERIFY_VERAPDF` | pdf-verify | Optional | Path to the veraPDF executable. Falls back to a PATH lookup, then to the built-in rule subset |
 | `PDF_VERIFY_TRUST_ANCHORS` | pdf-verify | Optional | Directory of trust anchor certificates. Without it a verdict cannot go beyond `use_with_caution` |
 | `PDF_WRITER_FONT` | pdf-writer | In practice, for Japanese output | A single-face `.ttf` / `.otf` (the static Noto Sans JP build is a good choice) |
