@@ -63,8 +63,17 @@ MCP plugins and inherit that environment at start-up.
 - pdf-writer-mcp **v0.15.0+** recommended — `preserveSignatures`, `tag_form_fields`.
   **v0.16.0+** adds PDF 2.0 output and the PDF/A-4 / PDF/A-4f containers (`ensure_pdfa` `flavour`)
 
+- **Node.js 20 or later.** The 2026-08-27 releases (spec 0.6.0, reader 0.13.0, verify 0.18.0,
+  writer 0.21.0) put `engines.node` at `>=20` on all four servers; reader still ran on Node 18
+  up to v0.12.0. The servers start through `npx`, so the Node that matters is the one running
+  Claude Code
+
 Each MCP plugin connects with `@latest`, so these are normally satisfied. No version range is
 pinned in `dependencies` (see below).
+
+> The 2026-08-27 releases **reject an argument the input schema does not declare** (until then it
+> was silently dropped). The only argument this agent names is `include_bbox` on
+> `extract_structured_text`, which is declared — **nothing in this plugin needs to change.**
 
 ## Usage
 

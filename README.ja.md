@@ -57,7 +57,15 @@ pdf-specialist-plugin/
 - pdf-writer-mcp **v0.15.0+** 推奨（preserveSignatures / tag_form_fields）。
   **v0.16.0+** で PDF 2.0 出力と PDF/A-4 / PDF/A-4f の器付け（`ensure_pdfa` の `flavour`）が入った
 
+- **Node.js 20 以上。** 2026-08-27 のリリース（spec 0.6.0 / reader 0.13.0 / verify 0.18.0 /
+  writer 0.21.0）で 4 サーバとも `engines.node` が `>=20` に揃った。reader は v0.12.0 まで
+  Node 18 でも動いていた。サーバは `npx` で起動するので、対象は Claude Code を動かしている Node
+
 各 MCP プラグインが `@latest` で接続するため通常は満たされる。`dependencies` にバージョン範囲は固定していない（下記）。
+
+> 2026-08-27 のリリースは、**宣言に無い引数を拒否する**ようになった（それまでは黙って捨てられていた）。
+> このエージェントが名指しする引数は `extract_structured_text` の `include_bbox` だけで、
+> 宣言済みであることを確認済み。**このプラグインに変更は要らない。**
 
 ## 使い方
 
