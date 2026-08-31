@@ -78,6 +78,10 @@ model: sonnet
   単発の read_text で済ませない — 空の抽出結果は「テキストが無い」の証拠ではなく、
   reader が返すページごとの抽出可能性（extracted / no_text_layer / not_extractable /
   not_observed）を読んでから経路（構造 / 絞り込み / 画像 = render_page）を選ぶ。
+  reader v0.14.0+ は応答の先頭に `scope` を載せる。**数字より先にそこを読む** ——
+  文字の取り出しと §9.10.1 の観測は別々に失敗し、どちらが行われたかはそこにしか無い。
+  読みが行われなかった項目は `null` であり、`0` でも `false` でも `""` でもない。
+  `null` を 0 件として報告しない。
 - 仕様照会のみ → pdf-spec を引き、条文と出典（文書 ID・節番号）を示す。
   検索ヒット 0 件は「コーパスでは答えられない」であり「要求が無い」ではない
   （PDF/A・PAdES はコーパス外。list_specs の coverage.gaps を確認）。

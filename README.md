@@ -59,7 +59,13 @@ MCP plugins and inherit that environment at start-up.
 - pdf-reader-mcp **v0.10.0+** recommended — `locate_objects` (object number → page and rectangle),
   which is what turns that diff into a location. **v0.11.0+** adds the other direction:
   `extract_structured_text` with `include_bbox` locates a *structure element*, so "annotate this
-  paragraph" needs no coordinate from the user either
+  paragraph" needs no coordinate from the user either.
+  **v0.14.0+ recommended for reading** — every text-returning tool now carries `scope`, saying
+  which of the two readings behind its answer were done (taking the characters off the page, and
+  observing whether those characters have a route to Unicode). A field whose reading did not
+  happen is `null`, never `0`, `false` or `""`, so "not read" no longer looks like "read and found
+  nothing". `render_page` also stops a page that does not finish rasterising instead of hanging
+  the server
 - pdf-writer-mcp **v0.15.0+** recommended — `preserveSignatures`, `tag_form_fields`.
   **v0.16.0+** adds PDF 2.0 output and the PDF/A-4 / PDF/A-4f containers (`ensure_pdfa` `flavour`)
 
