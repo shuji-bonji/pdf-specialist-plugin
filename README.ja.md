@@ -49,7 +49,12 @@ pdf-specialist-plugin/
   **監査レポートには v0.17.0+ 推奨**（リビジョン一覧が全履歴かの `revisionChain`（v0.16.0）と、
   `startxref` の個数とリビジョン一覧の食い違いに説明が付いているかの
   `revisionCountAgreement`（v0.17.0）がフィールドになった。pdf-trust v0.7.0 は
-  `notes` の散文照合ではなくこの 2 つを読む）
+  `notes` の散文照合ではなくこの 2 つを読む）／
+  **署名の判定には v0.29.0+ 推奨**（v0.27.0 で証明書の有効期間と失効を検証できたタイムスタンプの時刻で
+  判定するようになり（ISO 32000-2 §12.8.3.4.5・§12.8.3.4.6）、失効した署名者証明書はタイムスタンプが
+  失効より前を示すときだけ `revoked_after_validation_time`、それ以外は `indeterminate` になった。
+  v0.28.0 で `revocation_freshness`（既定 24 時間）より古い失効情報を `good` の根拠にしなくなり、
+  v0.29.0 で JSON を文字数で切らなくなった。pdf-trust は v0.8.1 / v0.8.2 がこれを読む）
 - pdf-reader-mcp **v0.10.0+** 推奨（`locate_objects` = オブジェクト番号 → ページ + 矩形。
   上の差分を位置に落とすのに要る）／**v0.11.0+** で逆方向も揃う
   （`extract_structured_text` の `include_bbox` = **構造要素** → 矩形。
@@ -59,9 +64,13 @@ pdf-specialist-plugin/
   変換できるかを観測すること）のどちらが行われたかを言う。読みが行われなかった項目は
   `null` であり、`0` でも `false` でも `""` でもないので、「読んでいない」が
   「読んで無かった」に見えることが無くなった。`render_page` も、ラスタライズが終わらない
-  ページでサーバを止めずに、そのページだけ止めて理由を出す
+  ページでサーバを止めずに、そのページだけ止めて理由を出す／
+  **暗号化文書の読み取りには v0.15.1+ 推奨** —— v0.15.0 から、空の利用者パスワードで鍵が導ける
+  暗号化文書を復号して読む。v0.15.1 で、そうした文書に `summarize` の `next` が
+  「先に復号せよ」と誤って助言していたのが直った
 - pdf-writer-mcp **v0.15.0+** 推奨（preserveSignatures / tag_form_fields）。
-  **v0.16.0+** で PDF 2.0 出力と PDF/A-4 / PDF/A-4f の器付け（`ensure_pdfa` の `flavour`）が入った
+  **v0.16.0+** で PDF 2.0 出力と PDF/A-4 / PDF/A-4f の器付け（`ensure_pdfa` の `flavour`）が入った／
+  **v0.21.1+** で `ensure_tagged` が成功時にも「宣言を書いただけで適合は測っていない」warning を返す
 
 - **Node.js 20 以上。** 2026-08-27 のリリース（spec 0.6.0 / reader 0.13.0 / verify 0.18.0 /
   writer 0.21.0）で 4 サーバとも `engines.node` が `>=20` に揃った。reader は v0.12.0 まで

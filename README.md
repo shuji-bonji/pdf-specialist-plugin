@@ -55,7 +55,13 @@ MCP plugins and inherit that environment at start-up.
   **v0.17.0+ recommended for audit reports** — whether the revision list is the whole history
   (`revisionChain`, v0.16.0) and whether the `startxref` count and the listed revisions differ for a
   stated reason (`revisionCountAgreement`, v0.17.0) are then fields; pdf-trust v0.7.0 reads them
-  instead of matching prose in `notes`
+  instead of matching prose in `notes`.
+  **v0.29.0+ recommended for signature verdicts** — v0.27.0 judges certificate validity and
+  revocation at the time of a verified timestamp (ISO 32000-2 §12.8.3.4.5 / §12.8.3.4.6), and a
+  revoked signer certificate is `revoked_after_validation_time` only when a timestamp proves the
+  signature predates the revocation, `indeterminate` otherwise. v0.28.0 stops using revocation
+  information older than `revocation_freshness` (default 24 hours) as evidence for `good`, and
+  v0.29.0 stops cutting JSON at a character count. pdf-trust v0.8.1 / v0.8.2 read these
 - pdf-reader-mcp **v0.10.0+** recommended — `locate_objects` (object number → page and rectangle),
   which is what turns that diff into a location. **v0.11.0+** adds the other direction:
   `extract_structured_text` with `include_bbox` locates a *structure element*, so "annotate this
@@ -65,9 +71,13 @@ MCP plugins and inherit that environment at start-up.
   observing whether those characters have a route to Unicode). A field whose reading did not
   happen is `null`, never `0`, `false` or `""`, so "not read" no longer looks like "read and found
   nothing". `render_page` also stops a page that does not finish rasterising instead of hanging
-  the server
+  the server.
+  **v0.15.1+ recommended for encrypted documents** — from v0.15.0 a document whose key can be
+  derived from the empty user password is decrypted and read; v0.15.1 stops `summarize`'s `next`
+  from telling the caller to decrypt such a document first
 - pdf-writer-mcp **v0.15.0+** recommended — `preserveSignatures`, `tag_form_fields`.
-  **v0.16.0+** adds PDF 2.0 output and the PDF/A-4 / PDF/A-4f containers (`ensure_pdfa` `flavour`)
+  **v0.16.0+** adds PDF 2.0 output and the PDF/A-4 / PDF/A-4f containers (`ensure_pdfa` `flavour`).
+  **v0.21.1+** makes `ensure_tagged` return the "claims, not checked" warning on success as well
 
 - **Node.js 20 or later.** The 2026-08-27 releases (spec 0.6.0, reader 0.13.0, verify 0.18.0,
   writer 0.21.0) put `engines.node` at `>=20` on all four servers; reader still ran on Node 18
