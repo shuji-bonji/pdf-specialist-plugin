@@ -79,6 +79,15 @@ MCP plugins and inherit that environment at start-up.
   **v0.16.0+** adds PDF 2.0 output and the PDF/A-4 / PDF/A-4f containers (`ensure_pdfa` `flavour`).
   **v0.21.1+** makes `ensure_tagged` return the "claims, not checked" warning on success as well
 
+- pdf-spec-mcp **v0.7.0+** — required if the agent cites ISO 32000-1 (`spec: "pdf17"`): up to
+  v0.6.2 `get_section` / `get_requirements` / `search_spec` on that document carried the
+  neighbouring sections' text and `get_tables` returned 0 tables for every section.
+  **v0.8.0+ recommended** — `boundary` / `sectionsCutByPage` say whether a section's content was
+  cut at a heading or at a page edge, so the agent can tell "no table seen" from "no table".
+  **v0.9.0+ recommended** — tables in an annex carry their `caption` (`Table F.5`,
+  `Table Annex O.3`); up to v0.8.0 they came back `caption: null` and consecutive annex tables
+  sharing a header were merged (Annex F of ISO 32000-1 returned 7 tables for its 12)
+
 - **Node.js 20 or later.** The 2026-08-27 releases (spec 0.6.0, reader 0.13.0, verify 0.18.0,
   writer 0.21.0) put `engines.node` at `>=20` on all four servers; reader still ran on Node 18
   up to v0.12.0. The servers start through `npx`, so the Node that matters is the one running

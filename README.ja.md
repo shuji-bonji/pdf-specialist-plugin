@@ -72,6 +72,14 @@ pdf-specialist-plugin/
   **v0.16.0+** で PDF 2.0 出力と PDF/A-4 / PDF/A-4f の器付け（`ensure_pdfa` の `flavour`）が入った／
   **v0.21.1+** で `ensure_tagged` が成功時にも「宣言を書いただけで適合は測っていない」warning を返す
 
+- pdf-spec-mcp **v0.7.0+**（ISO 32000-1（`spec: "pdf17"`）の条文を引くなら必須 —— v0.6.2 まで
+  この文書では `get_section` / `get_requirements` / `search_spec` が前後の節の文を含み、
+  `get_tables` が全節で 0 件を返していた）／**v0.8.0+ 推奨**（`boundary` / `sectionsCutByPage` が、
+  節の内容を見出しで切ったかページの端で切ったかを申告する。「表を見ていない」と「表が無い」を
+  分けて読める）／**v0.9.0+ 推奨**（Annex の表に `caption` が付く（`Table F.5`・`Table Annex O.3`）。
+  v0.8.0 まで `caption: null` で返り、ヘッダ行が同じ表が続くと連結されていた —— ISO 32000-1 の
+  Annex F は 12 表あるのに 7 表で返っていた）
+
 - **Node.js 20 以上。** 2026-08-27 のリリース（spec 0.6.0 / reader 0.13.0 / verify 0.18.0 /
   writer 0.21.0）で 4 サーバとも `engines.node` が `>=20` に揃った。reader は v0.12.0 まで
   Node 18 でも動いていた。サーバは `npx` で起動するので、対象は Claude Code を動かしている Node
