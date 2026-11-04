@@ -2,7 +2,7 @@
 name: pdf-specialist
 description: >
   PDF の監査・検証・生成・仕様照会の専門家。PDF の真正性確認（署名・改ざん・
-  PDF/A・PAdES）、品質ゲート付き PDF 生成（PDF/UA・PDF/A-3・電帳法添付）、
+  PDF/A・PAdES）、品質ゲート付き PDF 生成（PDF/UA・PDF/A-3・データの添付）、
   ISO 32000 / PDF/UA の仕様照会を依頼されたら必ずこのエージェントに委譲する。
   「この PDF は信用できる？」「署名を確認して」「改ざんされてない？」
   「PDF/UA で作って」「アクセシブルな PDF にして」「タグ付き PDF の生成」
