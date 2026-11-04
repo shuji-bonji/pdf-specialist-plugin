@@ -39,7 +39,18 @@ pdf-specialist-plugin/
 | `PDF_VERIFY_TRUST_ANCHORS` | pdf-verify | 任意 | 信頼アンカー証明書ディレクトリ。無いと verdict は use_with_caution 止まり |
 | `PDF_WRITER_FONT` | pdf-writer | 日本語出力に実質必須 | 単一フェイス .ttf/.otf（Noto Sans JP static 版推奨） |
 
-環境変数はシェル環境（launchd / .zshenv 等）に設定する。サーバは MCP プラグイン 4 つが提供し、起動時にその環境を継承する。
+環境変数はシェル環境（launchd / .zshenv 等）に設定する。サーバーはこの plugin ではなく、依存として入る MCP プラグイン 4 つが起動する。各 MCP プラグインの `plugin.json` は次のとおり。
+
+- pdf-reader-mcp・pdf-verify-mcp・pdf-writer-mcp：`env` を持たない。サーバーは、起動したホストの環境をそのまま受け継ぐ
+- pdf-spec-mcp：`env` に `"PDF_SPEC_DIR": "${PDF_SPEC_DIR}"` を書いている。`${PDF_SPEC_DIR}` を置き換えるかはホストが決める。pdf-spec-mcp の README の表では、Claude Code のターミナルは置き換え、Grok Build 1.0.30 と、デスクトップアプリで「このコンピュータにリンク」したクラウドセッションは置き換えない。置き換えられずに届くと、pdf-spec は `PDF_SPEC_DIR is the unexpanded text "${PDF_SPEC_DIR}"` で始まる `REGISTRY_ERROR` を返し、`next_actions` の先頭でホストの設定に絶対パスを書くよう案内する（pdf-spec-mcp 0.6.2 から）
+
+> [!WARNING]
+> **Claude デスクトップアプリで「このコンピュータにリンク」したクラウドセッションでは、plugin のサーバーに `PDF_WRITER_FONT` と `PDF_SPEC_DIR` が届かなかった**（2026-11 の試用 E3）。Claude Code をターミナルで使う場合の話ではない。
+>
+> - pdf-writer：最初の生成が `FONT_REQUIRED` になる。呼び出しに `fontPath`（フォントの絶対パス）を渡せば生成できる。エラーの `next_actions` も同じ手を案内する
+> - pdf-spec：`PDF_SPEC_DIR` が `${PDF_SPEC_DIR}` という文字列のまま渡り、`REGISTRY_ERROR` になる。呼び出しの引数で回避する手段は無い。E3 では、`PDF_SPEC_DIR` を明示して別に登録した pdf-spec で代わりに確かめた
+>
+> Grok Build 1.0.70（E4）でも plugin では同じ形になり、`config.toml` の MCP の登録に書いた値は展開された。
 
 ### バージョン要件
 
@@ -150,9 +161,17 @@ MCP のツール名は `mcp__plugin_<プラグイン名>_<サーバ名>__<ツー
       `mcp__plugin_<プラグイン名>_<サーバ名>__<ツール名>` なので `mcp__pdf-reader__*` は
       何にもマッチせず、allowlist の結果 **エージェントは Read / Glob / Skill しか持っていなかった**。
       v0.4.0 で完全なプレフィックスを明記し、MCP を依存へ移して名前が環境に依存しないようにした
-- [x] plugin.json の `env` での `${VAR}` 展開は**機能しない**（2026-07-26 に別プラグインの
-      実挙動で確認: `"${PDF_SPEC_DIR}"` がリテラルのまま渡り REGISTRY_ERROR）。
-      → env ブロックを外し、シェル環境（launchd / .zshenv）の継承に任せる方式に変更済み
+- [x] この plugin 自身の `plugin.json` の `env` は外した（2026-07-26）。当時はこの plugin が MCP サーバーを
+      直接定義しており、別の plugin で `"${PDF_SPEC_DIR}"` が置き換えられずに届き、`REGISTRY_ERROR` に
+      なることを確かめたため。v0.4.0 からはサーバーを依存の MCP プラグインに任せており、この plugin は
+      `env` も `mcpServers` も持たない。`${VAR}` を置き換えるかはホストによって違う（「必要な環境設定」を参照）
+- [x] **リモート接続のセッションでは、subagent から MCP が見えない**（2026-11 の試用 E3）。クラウドのセッションを
+      Claude Desktop 経由で Mac に接続すると、plugin の MCP のツール名は `mcp__remote-devices__plugin_pdf-*` になり、
+      `agents/pdf-specialist.md` の `tools`（`mcp__plugin_pdf-*`）に一致しない。subagent に見えるツールは
+      Read / Glob / Skill だけになり、PDF を扱えない。ツール名の前置きはホスト側が付けるもので、この plugin の
+      定義では変えられない。Grok Build 1.0.70（E4）では委譲でき、subagent の Trust Report の verdict と
+      firedRules は親セッションで同じ検体を監査した結果と一致した
+- [ ] 手元の Claude Code（リモート接続なし）から委譲したとき、subagent が MCP を呼べるか
 - [ ] 委譲の発火精度（description の文言調整）
 - [ ] model 指定（sonnet で十分か。仕様相談の比重が高ければ上位系へ）
 - [ ] 複数 PDF 並列監査時の挙動

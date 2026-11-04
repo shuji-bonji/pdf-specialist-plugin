@@ -41,11 +41,19 @@ later** (v2.1.143+ for enable/disable to propagate to dependencies).
 | `PDF_VERIFY_TRUST_ANCHORS` | pdf-verify | Optional | Directory of trust anchor certificates. Without it a verdict cannot go beyond `use_with_caution` |
 | `PDF_WRITER_FONT` | pdf-writer | In practice, for Japanese output | A single-face `.ttf` / `.otf` (the static Noto Sans JP build is a good choice) |
 
-Set these in your shell environment (launchd, `.zshenv`, and so on). The servers come from the four
-MCP plugins and inherit that environment at start-up.
+Set these in your shell environment (launchd, `.zshenv`, and so on). The servers are started by the four
+MCP plugins installed as dependencies, not by this plugin. Their `plugin.json` files differ:
 
-> [!NOTE]
-> `${VAR}` expansion inside a plugin.json `env` block **does not work** — the literal string is passed through. Every manifest in this family relies on shell-environment inheritance instead.
+- pdf-reader-mcp, pdf-verify-mcp and pdf-writer-mcp have no `env` block. Their servers inherit the environment of the host that starts them
+- pdf-spec-mcp declares `"PDF_SPEC_DIR": "${PDF_SPEC_DIR}"` in `env`, and whether `${PDF_SPEC_DIR}` is substituted is up to the host. Per the table in pdf-spec-mcp's README, Claude Code in a terminal substitutes it; Grok Build 1.0.30 and a cloud session linked through the Claude desktop app ("Link to this computer") do not. When the literal text arrives, pdf-spec (v0.6.2+) answers `REGISTRY_ERROR` with a message starting `PDF_SPEC_DIR is the unexpanded text "${PDF_SPEC_DIR}"`, and its first `next_actions` entry asks for an absolute path in the host's own config
+
+> [!WARNING]
+> **In a cloud session linked to a computer through the Claude desktop app ("Link to this computer"), `PDF_WRITER_FONT` and `PDF_SPEC_DIR` did not reach the plugins' servers** (trial E3, 2026-11). This is not about Claude Code in a terminal.
+>
+> - pdf-writer: the first create call fails with `FONT_REQUIRED`. Passing `fontPath` (an absolute path to the font) on the call works, and the error's `next_actions` suggests the same
+> - pdf-spec: `PDF_SPEC_DIR` arrives as the literal string `${PDF_SPEC_DIR}` and the server answers `REGISTRY_ERROR`. No call argument works around it. In E3, pdf-spec was checked through a separately registered server with `PDF_SPEC_DIR` set explicitly
+>
+> Grok Build 1.0.70 (E4) behaved the same way for the plugins, while a value written in its `config.toml` MCP entry was expanded.
 
 ### Version requirements
 
@@ -162,7 +170,9 @@ release tags in use today.
       `claude plugin prune`; and disabling pdf-trust while pdf-specialist is enabled is refused
       with a chained command. What is *not* yet verified is delegation and day-to-day use
 - [x] **The `tools` wildcards did not match** (found 2026-07-27). The documented naming is `mcp__plugin_<plugin-name>_<server-name>__<tool-name>`, so `mcp__pdf-reader__*` matched nothing and the allowlist left the agent with only Read / Glob / Skill. Fixed in v0.4.0 by writing the full prefixes and moving the MCP servers to dependencies so the names stop depending on what else is installed
-- [x] `${VAR}` expansion in plugin.json's `env` **does not work** (confirmed 2026-07-26 against another plugin: `"${PDF_SPEC_DIR}"` arrived verbatim and produced a REGISTRY_ERROR). The `env` block was removed in favour of shell-environment inheritance
+- [x] This plugin's own `env` block was removed (2026-07-26). At the time this plugin defined the MCP servers itself, and another plugin had shown `"${PDF_SPEC_DIR}"` arriving verbatim and producing a REGISTRY_ERROR. Since v0.4.0 the servers come from the MCP plugin dependencies, and this plugin has neither `env` nor `mcpServers`. Whether `${VAR}` is substituted depends on the host (see Environment)
+- [x] **In a remotely linked session the subagent cannot see the MCP servers** (trial E3, 2026-11). When a cloud session is linked to a Mac through Claude Desktop, the plugins' tools are named `mcp__remote-devices__plugin_pdf-*`, which the `tools` allowlist in `agents/pdf-specialist.md` (`mcp__plugin_pdf-*`) does not match. The subagent then sees only Read / Glob / Skill and cannot work with PDFs. The prefix is added by the host and cannot be changed from this plugin's definition. In Grok Build 1.0.70 (E4) delegation worked, and the subagent's Trust Report gave the same verdict and firedRules as the parent session auditing the same file
+- [ ] Whether the subagent can call the MCP servers when delegated from a local Claude Code session (no remote link)
 - [ ] How reliably delegation fires (wording of the description)
 - [ ] Model choice — whether sonnet suffices, or specification-heavy work warrants a stronger model
 - [ ] Behaviour when auditing several PDFs at once
