@@ -49,9 +49,15 @@ model: sonnet
 - 4 値判定（trust_and_use / use_with_caution / human_review_required / reject）は
   evaluate_policy の verdict をそのまま使う。**上書き禁止**。firedRules / advisories は
   結果の解説に使い、判定の変更には使わない。advisory を失敗と読まない。
-- ensure_pdfa / ensure_tagged を呼んだら、対応する flavour を validate_conformance で必ず測る
-  （ensure_tagged なら pdfua-1、ensure_pdfa なら**渡した flavour と同じ文字列** =
-  pdfa-3b / pdfa-4 / pdfa-4f）。**測らないならラベルも書かない**（ラベル ≠ 規格どおり）。
+- ensure_pdfa / ensure_tagged を呼んだら、対応する flavour を validate_conformance で必ず測る。
+  **測る flavour は writer の結果の `output.declares` から決める**（writer v0.28.0〜。書いたファイルから
+  読み戻した版と宣言）: `pdfua` が 1 なら pdfua-1、2 なら pdfua-2（PDF 2.0 の入力への ensure_tagged、
+  `tagged: true` と `pdfVersion: "2.0"` の生成）、`pdfa` が "3b" / "4" / "4f" なら pdfa-3b / pdfa-4 / pdfa-4f。
+  **測らないならラベルも書かない**（ラベル ≠ 規格どおり）。`declares` は自己申告であって適合ではない。
+- PDF/UA と PDF/A の組み合わせは版で決まる。PDF 1.7 は PDF/UA-1 + PDF/A-3b、PDF 2.0 は PDF/UA-2 + PDF/A-4。
+  版をまたぐ組み合わせを writer は INVALID_ARGUMENT で断り、`next_actions` の `example` を示す
+  （ensure_pdfa の retry_with_flavour、merge_pdfs の pdfVersion）。**その example に黙って従わない** ——
+  版を変えると名乗れる規格が変わるので、利用者に選ばせる。
   **添付を持つ文書を PDF/A-4 にするなら pdfa-4f** — 素の pdfa-4 は添付ファイル自身が
   PDF/A であることを要求するため（veraPDF `ISO 19005-4:2020 6.9-3`）、CSV/JSON 同梱は非適合になる。
 - 内容の真偽は判定しない。判定するのは真正性（原本性・完全性）と規格適合のみ。

@@ -82,6 +82,9 @@ pdf-specialist-plugin/
 - pdf-writer-mcp **v0.15.0+** 推奨（preserveSignatures / tag_form_fields）。
   **v0.16.0+** で PDF 2.0 出力と PDF/A-4 / PDF/A-4f の器付け（`ensure_pdfa` の `flavour`）が入った／
   **v0.21.1+** で `ensure_tagged` が成功時にも「宣言を書いただけで適合は測っていない」warning を返す
+  **v0.28.1+ 推奨** —— v0.27.0 で PDF/UA-2（`tagged: true` と `pdfVersion: "2.0"`）が書けるようになった／
+  v0.28.0 から全ツールの結果に `output`（書いたファイルの版と宣言）が入り、エージェントは測る flavour を
+  ここから決める／v0.28.1 で PDF/UA-2 の文書に足す注釈とウィジェットの `/Contents` を直した
 
 - pdf-spec-mcp **v0.7.0+**（ISO 32000-1（`spec: "pdf17"`）の条文を引くなら必須 —— v0.6.2 まで
   この文書では `get_section` / `get_requirements` / `search_spec` が前後の節の文を含み、

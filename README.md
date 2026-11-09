@@ -86,6 +86,10 @@ MCP plugins installed as dependencies, not by this plugin. Their `plugin.json` f
 - pdf-writer-mcp **v0.15.0+** recommended — `preserveSignatures`, `tag_form_fields`.
   **v0.16.0+** adds PDF 2.0 output and the PDF/A-4 / PDF/A-4f containers (`ensure_pdfa` `flavour`).
   **v0.21.1+** makes `ensure_tagged` return the "claims, not checked" warning on success as well
+  **v0.28.1+ recommended** — v0.27.0 writes PDF/UA-2 (`tagged: true` with `pdfVersion: "2.0"`);
+  v0.28.0 returns `output` (the version and declarations of the written file) on every result,
+  which the agent uses to pick the flavours to measure; v0.28.1 fixes the `/Contents` of
+  annotations and widgets added to a PDF/UA-2 document
 
 - pdf-spec-mcp **v0.7.0+** — required if the agent cites ISO 32000-1 (`spec: "pdf17"`): up to
   v0.6.2 `get_section` / `get_requirements` / `search_spec` on that document carried the
